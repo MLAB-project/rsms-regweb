@@ -40,13 +40,14 @@ class E_CHANSEL(IntEnum):
 
 class R_CTRL(Register32):
     RECORDING = 31
-    DET1CH = 23, 21, E_CHANSEL
-    DET1EN = 20
-    DET0CH = 19, 17, E_CHANSEL
-    DET0EN = 16
     BYPASS_FIR = 8
     RST    = 1
     EN     = 0
+
+    DET0CH = 19, 17, E_CHANSEL
+    DET0EN = 16
+    DET1CH = 23, 21, E_CHANSEL
+    DET1EN = 20
 
 class R_SHAPEON(Register32):
     '''DETECT pulse shape (ON duration)'''
