@@ -49,22 +49,22 @@ class R_CTRL(Register32):
     DET1CH = 23, 21, E_CHANSEL
     DET1EN = 20
 
-class R_SHAPEON(Register32):
+class R_SHAPEON(Register32, ContinuousRegister):
     '''DETECT pulse shape (ON duration)'''
 
-class R_SHAPEOFF(Register32):
+class R_SHAPEOFF(Register32, ContinuousRegister):
     '''DETECT pulse shape (ON+OFF duration)'''
 
-class R_DET0TH(Register32):
+class R_DET0TH(Register32, ContinuousRegister):
     '''DET0: Theshold in signal level'''
 
-class R_DET0DU(Register32):
+class R_DET0DU(Register32, ContinuousRegister):
     '''DET0: Threshold in duration'''
 
-class R_DET1TH(Register32):
+class R_DET1TH(Register32, ContinuousRegister):
     '''DET1: Theshold in signal level'''
 
-class R_DET1DU(Register32):
+class R_DET1DU(Register32, ContinuousRegister):
     '''DET1: Threshold in duration'''
 
 class PeriphRegMap(RegMap):

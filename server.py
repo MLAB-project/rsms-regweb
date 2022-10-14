@@ -6,6 +6,9 @@ from regdefs import *
 class ReadRegister32(Register32):
     pass
 
+class ContinuousRegister:
+    pass
+
 class RegmapWebform:
     def __init__(self, regmap, split=8, posthook=None):
         self.regmap = regmap
@@ -51,9 +54,15 @@ class RegmapWebform:
         """
 
         if not reg._fields_list:
-            s += f"""
-                0x<input type="text" value="{int(reg):x}" name="_value" {rotext} /><br>
-            """
+            if isinstance(reg, ContinuousRegister):
+                s += f"""
+                    <input type="hidden" name="_form" value="dec" />
+                    <input type="number" value="{int(reg)}" name="_value" min="0" {rotext} /><br>
+                """
+            else:
+                s += f"""
+                    0x<input type="text" value="{int(reg):x}" name="_value" {rotext} /><br>
+                """
         else:
             s += "".join([self.render_field(reg, name, val, ro) for name, val in acc.reg.fields.items()])
 
@@ -68,8 +77,8 @@ class RegmapWebform:
         return s
 
     def _set_value(self, regname, vals):
-        if "_value" in vals:
-            getattr(self.regmap, regname).val = vals["_value"]
+        if isinstance(vals, int):
+            getattr(self.regmap, regname).val = vals
         else:
             getattr(self.regmap, regname).set(**vals)
         if self.posthook:
@@ -82,7 +91,16 @@ class RegmapWebform:
         if cherrypy.request.method == "POST":
             regname = kwargs["_regname"]
             del kwargs["_regname"]
-            self._set_value(regname, {k: isinstance(v, list) or int(v, 16) for k, v in kwargs.items()})
+            if "_value" in kwargs:
+                form = kwargs.get("_form", "hex")
+                conv = {
+                    "dec": lambda s: int(s),
+                    "hex": lambda s: int(s, 16),
+                }
+                self._set_value(regname, conv[form](kwargs["_value"]))
+            else:
+                self._set_value(regname, {k: isinstance(v, list) or int(v, 16)
+                                          for k, v in kwargs.items()})
 
         s = """<html>
           <head><title>RSMS Detection Configurator</title><style>
