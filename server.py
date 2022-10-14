@@ -17,42 +17,43 @@ class RegmapWebform:
         info = getattr(reg.__class__, name)
         if isinstance(info, int):
             chktext = "checked" if val else "unchecked"
-            return """
-                <input type="hidden" name="{}" value="0" />
-                <input type="checkbox" id="{}" name="{}" value="1" {} {} />
-                <label for="{}">{}</label><br>
-            """.format(name, name, name, chktext, rotext, name, name)
+            return f"""
+                <input type="hidden" name="{name}" value="0" />
+                <input type="checkbox" id="{name}" name="{name}" value="1" {chktext} {rotext} />
+                <label for="{name}">{name}</label><br>
+            """
         elif len(info) == 3:
-            return """
-                <label for="{}">{}:</label>
-                <select name="{}" id="{}">
-            """.format(name, name, name, name) + "".join("<option value=\"{}\" {}>{}</option>".format(int(v), 'selected' if int(v)==val else '', v.name) for v in info[2]) + """
+            return f"""
+                <label for="{name}">{name}:</label>
+                <select name="{name}" id="{name}">
+            """ + "".join(f"<option value=\"{int(v)}\" {'selected' if int(v)==val else ''}>{v.name}</option>"
+                          for v in info[2]) + """
                 </select><br>
             """
         else:
-            return """
-                {}: 0x<input type="text" value="{x}" name="{}" {} /><br>
-            """.format(name, val, name, rotext)
+            return f"""
+                {name}: 0x<input type="text" value="{val:x}" name="{name}" {rotext} /><br>
+            """
 
     def render_reg(self, name, acc):
         reg = acc.reg
         ro = isinstance(reg, ReadRegister32)
         rotext = "disabled=\"disabled\"" if ro else ""
 
-        s = """
+        s = f"""
         <form method="post" action=""><fieldset>
-            <legend>{}</legend>
-        """.format(name)
+            <legend>{name}</legend>
+        """
         if acc.cls.__doc__:
-            s += "<small><p>{}</p></small>".format(acc.cls.__doc__ or '')
-        s += """
-            <input type="hidden" name="_regname" value="{}" />
-        """.format(name)
+            s += f"<small><p>{acc.cls.__doc__ or ''}</p></small>"
+        s += f"""
+            <input type="hidden" name="_regname" value="{name}" />
+        """
 
         if not reg._fields_list:
-            s += """
-                0x<input type="text" value="{:x}" name="_value" {} /><br>
-            """.format(int(reg), rotext)
+            s += f"""
+                0x<input type="text" value="{int(reg):x}" name="_value" {rotext} /><br>
+            """
         else:
             s += "".join([self.render_field(reg, name, val, ro) for name, val in acc.reg.fields.items()])
 
