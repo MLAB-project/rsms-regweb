@@ -56,13 +56,13 @@ class R_SHAPEOFF(Register32, ContinuousRegister):
     '''DETECT pulse shape (ON+OFF duration)'''
 
 class R_DET0TH(Register32, ContinuousRegister):
-    '''DET0: Theshold in signal level'''
+    '''DET0: Threshold in signal level'''
 
 class R_DET0DU(Register32, ContinuousRegister):
     '''DET0: Threshold in duration'''
 
 class R_DET1TH(Register32, ContinuousRegister):
-    '''DET1: Theshold in signal level'''
+    '''DET1: Threshold in signal level'''
 
 class R_DET1DU(Register32, ContinuousRegister):
     '''DET1: Threshold in duration'''
